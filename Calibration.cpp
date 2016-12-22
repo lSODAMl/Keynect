@@ -6,14 +6,7 @@
 
 std::vector<Point2f> pos(4);
 int i;
-cv::Mat roiImg;
-cv::Mat copyImg;
-bool drag = false;
 bool flag = false;
-bool rs = false;
-Point p1, p2;
-Point h1, h2, v1, v2;
-double s = 1;
 
 Calibration::Calibration()
 {

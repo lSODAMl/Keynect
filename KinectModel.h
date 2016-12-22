@@ -36,7 +36,6 @@ public:
 	void SetAngle(double val) { angle = val; }
 	double GetAngle() { return angle; }
 
-	void ChangeAngle();
 	RGBQUAD* DepthRGBX() const { return m_pDepthRGBX; }
 	void DepthRGBX(RGBQUAD* val) { m_pDepthRGBX = val; }
 
