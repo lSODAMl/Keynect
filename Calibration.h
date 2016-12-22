@@ -12,5 +12,11 @@ public:
 	~Calibration();
 
 	Mat RoiSetUp(Mat depthImage);
-};
 
+	Point2f GetLeftTop();
+	Point2f GetRightBottom();
+
+private:
+	Point2f leftTop;
+	Point2f rightBottom;
+};

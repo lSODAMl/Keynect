@@ -77,6 +77,12 @@ UINT16 * KinectController::UpdateKinect()
 			hr = kModel.DepthFrame()->AccessUnderlyingBuffer(&nBufferSize, &pBuffer);
 		if (SUCCEEDED(hr))
 			hr = kModel.DepthFrame()->get_DepthMinReliableDistance(&nMinDepth);
+		else
+		{
+			std::cout << "pBuffer error! in controller" << std::endl;
+			return NULL;
+		}
+
 		if (SUCCEEDED(hr))
 			nMaxDepth = USHRT_MAX;
 		if (SUCCEEDED(hr))
@@ -89,13 +95,13 @@ UINT16 * KinectController::UpdateKinect()
 
 void KinectController::ChoiceFlattening(bool *flat)
 {
-	int c = cvWaitKey(10);
+	int c = cvWaitKey(1);
 	if (c == 'f')
 	{
-		std::cout << "flattening"<< std::endl;
+		std::cout << "flattening" << std::endl;
 		*flat = true;
 	}
-	
+
 	else if (c == 'c')
 	{
 		std::cout << "cancel" << std::endl;
@@ -123,23 +129,22 @@ void KinectController::SetDepth(const UINT16* pBuffer, int nWidth, int nHeight, 
 
 		// end pixel is start + width*height - 1
 		const UINT16* pBufferEnd = pBuffer + (nWidth * nHeight);
-		
+
 		// for cdeptharr
 		int i = 0;
 		while (pBuffer < pBufferEnd)
 		{
-			USHORT depth = *pBuffer;
+			int depth = *pBuffer;
 			if (flat == false)
 				kModel.cDepthArr[i++] = depth;
 			else
-				depth -= kModel.cDepthArr[i++];
+				depth -= (int)kModel.cDepthArr[i++];
 
-			SetRGB(pRGBX, depth,flat);
+			SetRGB(pRGBX, depth, flat);
 			++pRGBX;
 			++pBuffer;
 		}
 	}
-
 }
 
 int pos[3] = { 0 };
@@ -195,115 +200,119 @@ void KinectController::DecisionStandardDepth(const UINT16* pBuffer)
 	}
 }
 
-void KinectController::SetRGB(RGBQUAD* pRGBX, USHORT depth, bool flat)
+void KinectController::SetRGB(RGBQUAD* pRGBX, int depth, bool flat)
 {
+	//if (flat == true  + modify && depth != 0)
+	//   std::cout << "depth: " << depth << std::endl;
+	int modify = -10;
 
-	UINT std_depth = GetStandardDepth();
-	if (flat == true)
-		depth += std_depth;
-
-
-	if (std_depth < 600)
-		std_depth = 600;
-	if (depth < std_depth - 105)
-	{
-		pRGBX->rgbBlue = 255;
-		pRGBX->rgbGreen = 255;
-		pRGBX->rgbRed = 255;
-	}
-
-	else if (depth >= std_depth - 105 && depth < std_depth - 90)
+	if (depth >= -9 + modify && depth <  4 + modify)
 	{
 		pRGBX->rgbBlue = 206;
 		pRGBX->rgbGreen = 206;
 		pRGBX->rgbRed = 206;
 	}
-
-	else if (depth >= std_depth - 90 && depth < std_depth - 75)
+	//회색
+	else if (depth >= 4 + modify && depth < 22 + modify)
 	{
 		pRGBX->rgbBlue = 161;
 		pRGBX->rgbGreen = 161;
 		pRGBX->rgbRed = 161;
 	}
-
-	else if (depth >= std_depth - 75 && depth < std_depth - 60)
+	//검붉은색
+	else if (depth >= 22 + modify && depth < 35 + modify)
 	{
 		pRGBX->rgbBlue = 30;
 		pRGBX->rgbGreen = 30;
 		pRGBX->rgbRed = 130;
 	}
-	else if (depth >= std_depth - 60 && depth < std_depth - 45)
+	//갈색
+	else if (depth >= 35 + modify && depth < 48 + modify)
 	{
 		pRGBX->rgbBlue = 0;
 		pRGBX->rgbGreen = 67;
 		pRGBX->rgbRed = 161;
 	}
-
-	else if (depth >= std_depth - 45 && depth < std_depth - 30)
+	//맑은 갈색
+	else if (depth >= 48 + modify && depth < 61 + modify)
+	{
+		pRGBX->rgbBlue = 49;
+		pRGBX->rgbGreen = 151;
+		pRGBX->rgbRed = 219;
+	}
+	//연한 황색
+	else if (depth >= 61 + modify && depth <  74 + modify)
 	{
 		pRGBX->rgbBlue = 125;
 		pRGBX->rgbGreen = 215;
 		pRGBX->rgbRed = 232;
 	}
-
-	else if (depth >= std_depth - 30 && depth < std_depth - 15)
+	//풀색
+	else if (depth >= 74 + modify && depth <  87 + modify)
+	{
+		pRGBX->rgbBlue = 23;
+		pRGBX->rgbGreen = 185;
+		pRGBX->rgbRed = 129;
+	}
+	//수박색
+	else if (depth >= 87 + modify && depth < 100 + modify)
 	{
 		pRGBX->rgbBlue = 47;
 		pRGBX->rgbGreen = 122;
 		pRGBX->rgbRed = 16;
 	}
-
-	else if (depth >= std_depth - 15 && depth < std_depth + 15)
+	//청록색
+	else if (depth >= 100 + modify && depth <  110 + modify)
 	{
 		pRGBX->rgbBlue = 71;
 		pRGBX->rgbGreen = 97;
 		pRGBX->rgbRed = 0;
-	}/*
-	else if (depth >= std_depth && depth < std_depth + 50)
-	{
-		pRGBX->rgbBlue = 255;
-		pRGBX->rgbGreen = 226;
-		pRGBX->rgbRed = 176;
-	}*/
-	else if (depth >= std_depth + 15 && depth < std_depth + 30)
+	}
+	//하늘색
+	else if (depth >= 110 + modify && depth <  120 + modify)
 	{
 		pRGBX->rgbBlue = 250;
 		pRGBX->rgbGreen = 206;
 		pRGBX->rgbRed = 135;
 	}
-
-	else if (depth >= std_depth + 30 && depth < std_depth + 45)
+	//맑은 파랑
+	else if (depth >= 120 + modify && depth <  130 + modify)
 	{
 		pRGBX->rgbBlue = 205;
 		pRGBX->rgbGreen = 140;
 		pRGBX->rgbRed = 24;
 	}
-
-	else if (depth >= std_depth + 45 && depth < std_depth + 60)
+	//어두운 청록
+	else if (depth >= 130 + modify && depth <  140 + modify)
 	{
 		pRGBX->rgbBlue = 160;
 		pRGBX->rgbGreen = 108;
 		pRGBX->rgbRed = 19;
 	}
-	else if (depth >= std_depth + 60 && depth < std_depth + 75)
+	//매우 어두운 청록
+	else if (depth >= 140 + modify && depth < 150 + modify)
 	{
 		pRGBX->rgbBlue = 102;
 		pRGBX->rgbGreen = 50;
 		pRGBX->rgbRed = 0;
 	}
-	else if (depth >= std_depth + 75 && depth < std_depth + 90)
+	//어두운 네이비
+	else if (depth >= 150 + modify && depth <  160 + modify)
 	{
-		pRGBX->rgbBlue = 100;
+		pRGBX->rgbBlue;
 		pRGBX->rgbGreen = 30;
 		pRGBX->rgbRed = 0;
 	}
-	else if (depth >= std_depth + 90)
+	//매우 어두운 네이비
+	else if (depth >= 160 + modify && depth <  170 + modify)
 	{
 		pRGBX->rgbBlue = 80;
 		pRGBX->rgbGreen = 0;
 		pRGBX->rgbRed = 0;
 	}
+	else {
 
+	}
 }
 
 int KinectController::GetWidth()
@@ -315,7 +324,14 @@ int KinectController::GetHeight()
 {
 	return kModel.cDepthHeight;
 }
-
+int KinectController::GetnWidth()
+{
+	return nWidth;
+}
+int KinectController::GetnHeight()
+{
+	return nHeight;
+}
 RGBQUAD* KinectController::GetRGBX()
 {
 	return kModel.DepthRGBX();

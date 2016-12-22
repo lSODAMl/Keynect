@@ -15,29 +15,30 @@ public:
 	~KinectController();
 
 public:
-	void		InitKinect();
-	UINT16 *	UpdateKinect();
-	void		ChoiceFlattening(bool *flat);
-	void		MaintainKinect();
-	void		SetDepth(const UINT16* pBuffer, int nWidth, int nHeight, bool flat);
-	void		SetRGB(RGBQUAD* pRGBX, USHORT depth, bool flat);
-	int			GetWidth();
-	int			GetHeight();
-	RGBQUAD*	GetRGBX();
+	void      InitKinect();
+	UINT16 *   UpdateKinect();
+	void      ChoiceFlattening(bool *flat);
+	void      MaintainKinect();
+	void      SetDepth(const UINT16* pBuffer, int nWidth, int nHeight, bool flat);
+	void      SetRGB(RGBQUAD* pRGBX, int depth, bool flat);
+	int         GetWidth();
+	int         GetHeight();
+	int         GetnWidth();
+	int         GetnHeight();
+	RGBQUAD*   GetRGBX();
 	UINT16      GetStandardDepth() { return standard_depth; };
 	std::ofstream writeDump;
 
 	static void onMouse(int event, int x, int y, int flags, void*param);
-	void		DecisionStandardDepth(const UINT16* pBuffer);
-	void		SetStandardDepth(UINT16 depth);
-	bool		switcherFlag = false;
+	void      DecisionStandardDepth(const UINT16* pBuffer);
+	void      SetStandardDepth(UINT16 depth);
+	bool      switcherFlag = false;
 private:
 	KinectModel kModel;
-	USHORT		nMaxDepth;
-	USHORT		nMinDepth;
-	UINT16		standard_depth;
-	int			nHeight;
-	int			nWidth;
+	USHORT      nMaxDepth;
+	USHORT      nMinDepth;
+	UINT16      standard_depth;
+	int         nHeight;
+	int         nWidth;
 
 };
-

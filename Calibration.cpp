@@ -72,6 +72,10 @@ Mat Calibration::RoiSetUp(Mat depthImage)
 		warpCorners[2] = Point2f(0, warpImg.rows);
 		warpCorners[3] = Point2f(warpImg.cols, warpImg.rows);
 
+
+		leftTop = Point2f(pos[0].x, pos[0].y);
+		rightBottom = Point2f(pos[3].x, pos[3].y);
+
 		//Transformation Matrix ±¸ÇÏ±â
 
 		Mat trans = getPerspectiveTransform(pos, warpCorners);
@@ -79,7 +83,7 @@ Mat Calibration::RoiSetUp(Mat depthImage)
 		//Warping
 
 		warpPerspective((blackWindow), warpImg, trans, Size(maxWidth, maxHeight));
-		
+
 		copy = warpImg.clone();
 		return copy;
 
@@ -90,3 +94,12 @@ Mat Calibration::RoiSetUp(Mat depthImage)
 	return depthImage;
 }
 
+Point2f Calibration::GetLeftTop()
+{
+	return leftTop;
+}
+
+Point2f Calibration::GetRightBottom()
+{
+	return rightBottom;
+}
